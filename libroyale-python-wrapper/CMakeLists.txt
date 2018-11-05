@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 ### Check Python, NumPy and libroyale
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-find_package (Python REQUIRED)
+#find_package (Python REQUIRED) # Original
+find_package (PythonInterp 3.5 REQUIRED)
+find_package (PythonLibs 3.5 REQUIRED)
 find_package (NumPy REQUIRED)
 find_package (Royale REQUIRED)
 
