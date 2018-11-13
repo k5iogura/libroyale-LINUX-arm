@@ -24,7 +24,7 @@ LABELS = ('background',
           'motorbike', 'person', 'pottedplant',
           'sheep', 'sofa', 'train', 'tvmonitor')
 
-def overlay_on_image(args, display_image, object_info, depth_image):
+def overlay_on_image(args, display_image, object_info, depth_image, depth_meter):
 
     min_score_percent = 50  # detector threshold %
 
@@ -49,6 +49,10 @@ def overlay_on_image(args, display_image, object_info, depth_image):
     assert isinstance(depth_image[0][0],np.uint8)    ,str(type(depth_image[0][0]))
     object_region = np.zeros(display_image.shape[:2],dtype=np.uint8)                # HW
     object_region[box_top:box_bottom,box_left:box_right]=depth_image[box_top:box_bottom,box_left:box_right]
+
+    depth_meter_buf = depth_meter[box_top:box_bottom,box_left:box_right]
+    object_distance = np.min(depth_meter_buf[depth_meter_buf>0])
+    label_text = "%s(%.2fm)"%(LABELS[int(class_id)],object_distance)
     if not args.usedepth: object_region[object_region>0] = 255
     display_image = make_effect(display_image, object_region, class_id)
 
@@ -180,10 +184,10 @@ def process_event_queue (cam,g,args,z=None):
 
             if exec_net.requests[0].wait(-1) == 0:
                 res = exec_net.requests[0].outputs[out_blob]
-                itemZ = (255*itemZ).astype(np.uint8)
+                itemZui8 = (255*itemZ).astype(np.uint8)
                 for j in range(res.shape[2]):
                     if res[0][0][j][0] < 0:break
-                    frame_ov = overlay_on_image(args,frame_org.copy(),res[0][0][j],itemZ) # HWC uint8 => uint8
+                    frame_ov = overlay_on_image(args,frame_org.copy(),res[0][0][j],itemZui8,itemZ) # HWC uint8
                 if not isinstance(frame_ov,type(None)):
                     cv2.imshow('USB-Camera',frame_ov)
                 key=cv2.waitKey(1)
@@ -222,7 +226,7 @@ class MyListener(roypy.IDepthDataListener):
         for i in range(data.getNumPoints()):
             if self.mode == 1:     # Gray
                 values.append(data.getGrayValue(i)/255.)
-                if count%10 == 0:
+                if count%5 == 0:
                     valueZ[count] = data.getZ(i)
                 count+=1
 
