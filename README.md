@@ -146,15 +146,26 @@ $ python3 demo_camera.py
 
 ### Run PICO Flexx with Movidus Device via OpenVINO  
 
-    $ cd libroyale-LINUX-arm/3.21.1.70/python
-    $ python3 demo_fx3_ssd_mobilenet.py
+- Install SSD-Mobilenet OpenVINO environment  
+```
+    $ cd  
+    $ git clone https://github.com/k5iogura/vinosyp  
+```
+
+- Run demo  
+```
+    $ cd libroyale-LINUX-arm/3.21.1.70/python  
+    $ python3 demo_fx3_ssd_mobilenet.py  
+```
+
+- Demo script structure  
 
 ```
 - From PICO Flexx device,  
 get GrayScale image  
 get Depth image  
 
-- To Mobidius device,  
+- To Movidius device,  
 send GrayScale image to Movidius device  
 start inference engine  
 
@@ -165,6 +176,10 @@ overlay depth data on GrayScale image
 
 **It seems like pixelwise segmentation task.**
 **We used depth sensing results instead of segmentation NeuralNetwork model.**  
+
+![](files/Z+G+Flexx.png)
+
+Log Messages bellow,  
 
 ```
 Number of cameras connected:  1
@@ -206,4 +221,4 @@ Gtk-Message: Failed to load module "canberra-gtk-module"
 finished
 ```
 
-![](files/Z+G+Flexx.png)
+**Update Apr.03 2019**
