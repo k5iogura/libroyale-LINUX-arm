@@ -70,10 +70,12 @@ def main ():
     platformhelper = PlatformHelper()
     parser = argparse.ArgumentParser (usage = __doc__)
     add_camera_opener_options (parser)
-    parser.add_argument ("--seconds", type=int, default=15, help="duration to capture data")
+    parser.add_argument ("-s","--seconds", type=int, default=15, help="duration to capture data")
+    parser.add_argument ("-n","--name",    type=str, default='MODE_5_45FPS_500', help="mode name")
     options = parser.parse_args()
     opener = CameraOpener (options)
     cam = opener.open_camera ()
+    cam.setUseCase(options.name)
 
     print_camera_info (cam)
     print("isConnected", cam.isConnected())
