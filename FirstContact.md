@@ -53,3 +53,8 @@ CameraInfo items: 7
   ( BRIDGE_TYPE, Enclustra )
   ...
 ```
+Check is over.  
+
+### C++ samples
+
+[Document of ./samples/ directory is here](samples/README_samples.md)
