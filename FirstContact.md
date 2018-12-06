@@ -1,5 +1,7 @@
 # PMD CamBoard on RaspberryPi-3 Model B+
 
+## [royale + openni2 feasibility study](royale+openni2.md)
+
 ### Requirement:  
 - PMD CamBoard pico flexx
 - RaspberryPi-3 Model B+
