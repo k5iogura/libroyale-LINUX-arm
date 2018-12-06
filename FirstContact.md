@@ -149,6 +149,8 @@ openni2.unload()
 
 $ python3 websample.py
 ```
+My right hand seen!  
 
 ![](files/OpenNI2_first.png)
 
+This is the end of OpenNI2 + OpenNI2Driver Feasiblity Study:-)
