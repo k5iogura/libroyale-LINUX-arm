@@ -1,7 +1,13 @@
+import argparse
 import cv2
 import numpy as np
 
 from primesense import openni2
+
+args = argparse.ArgumentParser()
+args.add_argument("-k", "--waitKey", type=int, default=0,  help="waitKey value")
+args = args.parse_args()
+
 openni2.initialize()     # can also accept the path of the OpenNI redistribution
 
 dev = openni2.Device.open_any()
@@ -18,10 +24,9 @@ while True:
     da1d = depth_array.reshape(frame.height*frame.width)
     mx1d = max(da1d)
     depth_array = depth_array / mx1d
-    depth_array = convertTo(depth_array, cv2.CV_8UC1)
-    depth_array = cv2.applyColorMap(depth_array, cv2.COLORMAP_JET)
     cv2.imshow('depth_array', depth_array)
-    if cv2.waitKey(1) != -1: break
+    if cv2.waitKey(args.waitKey) != -1: break
 
 depth_stream.stop()
 openni2.unload()
+
