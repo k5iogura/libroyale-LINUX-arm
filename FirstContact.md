@@ -16,6 +16,8 @@
 # cp driver/udev/10-royale-ubuntu.rules /etc/udev/rules.d/
 $ id
 ...,46(plugdev), ...
+
+# reboot
 ```
 
 ***Insert CamBoard*** via USB port( 2.0 ).  
