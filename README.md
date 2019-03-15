@@ -3,7 +3,12 @@
   RaspberryPi Model B+  
   SDCard with Raspbian stretch(using 16GB SDCard)  
 
-- Connect Pico Flexx to USB port  
+- Boot RaspberryPi  
+  touch /boot/ssh  
+  lcd_rotate=2 in /boot/config.txt  
+
+- Connect Pico Flexx to USB port of RaspberryPi  
+
 Check as USB device bellow,  
 
 VenderID:1c28  
@@ -24,7 +29,7 @@ linux recognizes Pico Flexx.
 # apt -y upgrade
 ```
 
-- Copy royale_3.21.1.70 to RaspberryPi
+- Copy royale_3.21.1.70 to RaspberryPi(using WinSCP)
 
 ```
 $ unzip libroyale-3.21.1.70-LINUX-arm-32Bit.zip
@@ -89,5 +94,10 @@ $ pip3 install matplotlib
 # apt install python3-tk
 
 $ python3 sample_retrieve_data
+...
+isConnected True
+getFrameRate 5
 ```
+During 15sec flexx shots XYZ data.  
+
 
