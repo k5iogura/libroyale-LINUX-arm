@@ -137,3 +137,8 @@ $ python3 -c "import cv2"
 $
 ```
 Silence is good response!  
+
+```
+$ python3 demo_camera.py
+```
+![](files/Z.png)
