@@ -1,4 +1,8 @@
 # Pico Flexx on RaspberryPi with royale_3.21.1.70
+
+## [First move](FirstContact.md)
+## [Working with OpenNI2](royale+openni2.md)
+
 - Prepaire  
   RaspberryPi Model B+  
   SDCard with Raspbian stretch(using 16GB SDCard)  
