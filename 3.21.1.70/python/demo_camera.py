@@ -82,6 +82,7 @@ def main ():
     cam = opener.open_camera ()
 
     print_camera_info (cam)
+    cam.setUseCase(options.name)
     print("isConnected", cam.isConnected())
     print("getFrameRate", cam.getFrameRate())
 
@@ -90,7 +91,6 @@ def main ():
     q = queue.Queue(options.queues)
     l = MyListener(q,options.mode)
     cam.registerDataListener(l)
-    cam.setUseCase(options.name)
     cam.startCapture()
     # create a loop that will run for a time (default 15 seconds)
     process_event_queue (q, l, options.seconds)
