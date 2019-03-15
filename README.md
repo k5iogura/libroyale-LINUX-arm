@@ -2,7 +2,9 @@
 
 ## [First move](FirstContact.md)
 ## [Working with OpenNI2](royale+openni2.md)
+## Pico Flexx On RaspberryPi Model B+
 
+### Running samples  
 - Prepaire  
   RaspberryPi Model B+  
   SDCard with Raspbian stretch(using 16GB SDCard)  
@@ -103,5 +105,20 @@ isConnected True
 getFrameRate 5
 ```
 During 15sec flexx shots XYZ data.  
+**Checking Samples done**.  
 
+### Using OpenCV instead of matplotlib  
 
+- Install OpenCV for Python3  
+  All samples work with matplotlib. If you want to use complex vision processing with Pico Flexx, you have to install OpenCV for Python3. But OpenCV for Python3 is not installed via pip3.  
+  Intel OpenVINO has be provided with OpenCV for Python3 and installation is too easy!.  So **you shoud use OpenVINO package to use OpenCV for Python3 only**.  
+
+```
+$ tar xzf l_openvino_toolkit_ie_p_2018.5.445.tgz
+$ sed -i "s|<INSTALLDIR>|$(pwd)/inference_engine_vpu_arm|"  inference_engine_vpu_arm/bin/setupvars.sh
+$ . inference_engine_vpu_arm/bin/setupvars.sh
+[setupvars.sh] OpenVINO environment initialized
+$ python3 -c "import cv2"
+$
+```
+Silence is good response!  
