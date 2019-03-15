@@ -35,16 +35,30 @@ linux recognizes Pico Flexx.
 # apt -y upgrade
 ```
 
-- Copy royale_3.21.1.70 to RaspberryPi(using WinSCP)
+- Prepaire royale library  
+
+Select one of bellow,  
+
+(1) Copy royale_3.21.1.70 to RaspberryPi(using WinSCP)
 
 ```
+// Download zip library package from PMD Webpage and
 $ unzip libroyale-3.21.1.70-LINUX-arm-32Bit.zip
 $ cd libroyale-3.21.1.70-LINUX-arm-32Bit/driver/udev
 # cp 10-royale-ubuntu.rules /etc/udev/rules.d
 # reboot
+
+```
+#### OR
+(2) Use this repository  
+
+```
+$ cd 3.21.1.70/driver/udev
+# cp 10-royale-ubuntu.rules /etc/udev/rules.d
+# reboot
 ```
 
-- Install requirement for Python3  
+- Install requirement for Python3 library  
 
 ```
 # apt install libpython3.4-dev
