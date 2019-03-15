@@ -37,7 +37,7 @@ linux recognizes Pico Flexx.
 
 - Prepaire royale library  
 
-Select one of bellow,  
+Select one of two ways bellow,  
 
 (1) Copy royale_3.21.1.70 to RaspberryPi(using WinSCP)
 
@@ -49,7 +49,8 @@ $ cd libroyale-3.21.1.70-LINUX-arm-32Bit/driver/udev
 # reboot
 
 ```
-#### OR
+**OR**  
+
 (2) Use this repository  
 
 ```
