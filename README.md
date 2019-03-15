@@ -125,8 +125,8 @@ During 15sec flexx shots XYZ data.
 ### Using OpenCV instead of matplotlib  
 
 - Install OpenCV for Python3  
-  All samples work with matplotlib. If you want to use complex vision processing with Pico Flexx, you have to install OpenCV for Python3. But OpenCV for Python3 is not installed via pip3.  
-  Intel OpenVINO has be provided with OpenCV for Python3 and installation is too easy!.  So **you shoud use OpenVINO package to use OpenCV for Python3 only**.  
+  All PMD providing samples work with matplotlib. If you want to use complex vision processing with Pico Flexx then you have to install OpenCV for Python3. But OpenCV for Python3 can not be installed via pip3.  
+  Intel OpenVINO has provided OpenCV for Python3 and installation is too easy!.  So **you shoud use OpenVINO package to use OpenCV for Python3 only**.  
 
 ```
 $ tar xzf l_openvino_toolkit_ie_p_2018.5.445.tgz
