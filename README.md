@@ -5,7 +5,7 @@
 ## Pico Flexx On RaspberryPi Model B+
 
 ### Running samples  
-- Prepaire  
+- Prepare  
   RaspberryPi Model B+  
   SDCard with Raspbian stretch(using 16GB SDCard)  
 
