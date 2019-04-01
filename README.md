@@ -35,7 +35,7 @@ linux recognizes Pico Flexx.
 # apt -y upgrade
 ```
 
-- Prepaire royale library  
+- Prepare royale library  
 
 Select one of two ways bellow,  
 
