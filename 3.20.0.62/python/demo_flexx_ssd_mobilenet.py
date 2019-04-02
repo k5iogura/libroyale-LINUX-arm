@@ -38,23 +38,17 @@ def overlay_on_image(display_image, object_info, depth_image):
         return display_image
 
     label_text = LABELS[int(class_id)] + " (" + str(percentage) + "%)"
-    box_left   = int(object_info[base_index + 3] * source_image_width)
-    box_top    = int(object_info[base_index + 4] * source_image_height)
-    box_right  = int(object_info[base_index + 5] * source_image_width)
-    box_bottom = int(object_info[base_index + 6] * source_image_height)
+    box_left   = max(int(object_info[base_index + 3] * source_image_width), 0)
+    box_top    = min(int(object_info[base_index + 4] * source_image_height),depth_image.shape[0]-1)
+    box_right  = max(int(object_info[base_index + 5] * source_image_width), 0)
+    box_bottom = min(int(object_info[base_index + 6] * source_image_height),depth_image.shape[0]-1)
 
+    # aply depth effect
     assert depth_image.shape==display_image.shape[:2],str(depth_image.shape)+str(display_image.shape)
-    assert isinstance(depth_image[0][0],np.uint8)
-    object_region = np.zeros(display_image.shape[:2],dtype=np.uint8) # HW
-    for y in range(box_top,box_bottom):
-        for x in range(box_left,box_right):
-            if depth_image[y][x]>0:
-                object_region[y][x]=depth_image[y][x]
-    # 171, 224
-    #print([box_top,box_bottom],[box_left,box_right],
-        #xxxx.shape)
-        #(object_region[box_left:box_right][box_top:box_bottom]).shape)
-    display_image = make_effect(display_image, object_region)
+    assert isinstance(depth_image[0][0],np.uint8)    ,str(type(depth_image[0][0]))
+    object_region = np.zeros(display_image.shape[:2],dtype=np.uint8)                # HW
+    object_region[box_top:box_bottom,box_left:box_right]=depth_image[box_top:box_bottom,box_left:box_right]
+    display_image = make_effect(display_image, object_region, class_id)
 
     box_color     = (255, 128, 0)  # box color
     box_thickness = 1
@@ -78,22 +72,41 @@ def overlay_on_image(display_image, object_info, depth_image):
         label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, label_text_color, 1)
     return display_image
 
-def make_effect(src, depth):
+def make_effect(src, depth, class_id=0):
     assert len(src.shape)==3 and len(depth.shape)==2, str(src.shape)+str(depth.shape)
     assert isinstance(src,np.ndarray) and isinstance(depth,np.ndarray)
     depth0 = np.full(depth.shape,0,dtype=np.uint8)
     effect= np.zeros((3, depth.shape[0], depth.shape[1]),dtype=np.uint8) # CHW
-    effect[0]=effect[1]=depth
-    effect[2]=depth0
+    if class_id==18:     #sofa
+        effect[0]=depth0
+        effect[1]=depth
+        effect[2]=depth0
+    elif class_id%3==0:  #bird bus chair dog person sofa
+        effect[0]=depth0
+        effect[1]=depth0
+        effect[2]=depth
+    elif class_id%4==0:  #boat cat pottedplant tvmonitor
+        effect[0]=depth0
+        effect[1]=depth
+        effect[2]=depth0
+    elif class_id%7==0:  #car motorbike
+        effect[0]=depth0
+        effect[1]=depth
+        effect[2]=depth0
+    elif class_id%2==0:  #bicycle cow
+        effect[0]=depth0
+        effect[1]=depth0
+        effect[2]=depth0
+    else:                #aeroplane bottle diningtable horse sheep train
+        effect[0]=depth
+        effect[1]=depth
+        effect[2]=depth
     effect = effect.transpose((1,2,0))  # HWC
     src[np.where(effect>0)] = 0
-    #src = cv2.bitwise_and(src,src,depth)
     src += effect
     return src
 
 def process_event_queue (q,args,z=None):
-    input_image_size=(300,300)
-
     model_xml='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.xml'
     model_bin='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.bin'
     model_xml = os.environ['HOME'] + "/" + model_xml
@@ -126,7 +139,7 @@ def process_event_queue (q,args,z=None):
     done_frame=0
     while True:
         try:# Depth Image
-            itemZ= z.get(True, 3) # HW float
+            itemZ= z.get(True, 5) # HW float
         except queue.Empty:
             print("\nDepth image queue timeout and continue program")
         else:
@@ -134,7 +147,7 @@ def process_event_queue (q,args,z=None):
             #print(" ",len(itemZ[itemZ>0.]), np.max(itemZ), np.min(itemZ[itemZ!=0]))
 
         try:# Gray Image
-            item = q.get(True, 3) # orignal version
+            item = q.get(True, 5) # orignal version
         except queue.Empty:
             print("\nGray image queue timeout and exit from program")
             break
@@ -160,7 +173,6 @@ def process_event_queue (q,args,z=None):
                 for j in range(res.shape[2]):
                     if res[0][0][j][0] < 0:break
                     frame_ov = overlay_on_image(frame_org.copy(), res[0][0][j], itemZ) # HWC uint8 => uint8
-                #frame_ov = make_effect(frame_ov, itemZ)
                 if not isinstance(frame_ov,type(None)):
                     cv2.imshow('USB-Camera',frame_ov)
                 key=cv2.waitKey(1)
