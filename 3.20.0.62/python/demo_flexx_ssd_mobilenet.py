@@ -109,7 +109,7 @@ def make_effect(src, depth, class_id=0):
     src += effect
     return src
 
-def process_event_queue (q,args,z=None):
+def process_event_queue (g,args,z=None):
     model_xml='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.xml'
     model_bin='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.bin'
     model_xml = os.environ['HOME'] + "/" + model_xml
@@ -150,7 +150,7 @@ def process_event_queue (q,args,z=None):
             #print(" ",len(itemZ[itemZ>0.]), np.max(itemZ), np.min(itemZ[itemZ!=0]))
 
         try:# Gray Image
-            item = q.get(True, 5) # orignal version
+            item = g.get(True, 5) # orignal version
         except queue.Empty:
             print("\nGray image queue timeout and exit from program")
             break
@@ -195,9 +195,9 @@ def process_event_queue (q,args,z=None):
     del plugin
 
 class MyListener(roypy.IDepthDataListener):
-    def __init__(self, q, mode, z=None):
+    def __init__(self, g, mode, z=None):
         super(MyListener, self).__init__()
-        self.queue = q
+        self.queue = g
         self.queueZ= z
         self.mode  = mode
         if mode == 1:print("View Gray Mode")
@@ -253,14 +253,14 @@ def flexx (args):
     print("isConnected", cam.isConnected())
     print("getFrameRate", cam.getFrameRate())
 
-    #q = queue.Queue(args.queues)   # Gray  image Queue
+    #g = queue.Queue(args.queues)   # Gray  image Queue
     #z = queue.Queue(args.queues)   # Depth image Queue
-    q = mp.Queue(args.queues)   # Gray  image Queue
+    g = mp.Queue(args.queues)   # Gray  image Queue
     z = mp.Queue(args.queues)   # Depth image Queue
-    l = MyListener(q,args.mode,z)  # Listener
+    l = MyListener(g,args.mode,z)  # Listener
     cam.registerDataListener(l)    # Regist Listener
     cam.startCapture()             # start flexx
-    process_event_queue(q,args,z)  # camera loop with Inference
+    process_event_queue(g,args,z)  # camera loop with Inference
     cam.stopCapture()              # stop  flexx
 
 def main():
