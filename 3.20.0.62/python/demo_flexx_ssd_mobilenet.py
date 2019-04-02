@@ -5,11 +5,13 @@ import sys,os
 import cv2
 import numpy as np
 from time import time,sleep
+import queue
+import multiprocessing as mp
+
+# For OpenVINO
 from openvino.inference_engine import IENetwork, IEPlugin
 
 # For PICO FLEXX
-#import time
-import queue
 import roypy
 # from demo_camera import MyListener, main
 from sample_camera_info import print_camera_info
@@ -23,7 +25,7 @@ LABELS = ('background',
           'motorbike', 'person', 'pottedplant',
           'sheep', 'sofa', 'train', 'tvmonitor')
 
-def overlay_on_image(display_image, object_info, depth_image):
+def overlay_on_image(args, display_image, object_info, depth_image):
 
     min_score_percent = 50  # detector threshold %
 
@@ -48,6 +50,7 @@ def overlay_on_image(display_image, object_info, depth_image):
     assert isinstance(depth_image[0][0],np.uint8)    ,str(type(depth_image[0][0]))
     object_region = np.zeros(display_image.shape[:2],dtype=np.uint8)                # HW
     object_region[box_top:box_bottom,box_left:box_right]=depth_image[box_top:box_bottom,box_left:box_right]
+    if not args.usedepth: object_region[object_region>0] = 255
     display_image = make_effect(display_image, object_region, class_id)
 
     box_color     = (255, 128, 0)  # box color
@@ -172,7 +175,7 @@ def process_event_queue (q,args,z=None):
                 itemZ = (255*itemZ).astype(np.uint8)
                 for j in range(res.shape[2]):
                     if res[0][0][j][0] < 0:break
-                    frame_ov = overlay_on_image(frame_org.copy(), res[0][0][j], itemZ) # HWC uint8 => uint8
+                    frame_ov = overlay_on_image(args,frame_org.copy(),res[0][0][j],itemZ) # HWC uint8 => uint8
                 if not isinstance(frame_ov,type(None)):
                     cv2.imshow('USB-Camera',frame_ov)
                 key=cv2.waitKey(1)
@@ -250,8 +253,10 @@ def flexx (args):
     print("isConnected", cam.isConnected())
     print("getFrameRate", cam.getFrameRate())
 
-    q = queue.Queue(args.queues)   # Gray  image Queue
-    z = queue.Queue(args.queues)   # Depth image Queue
+    #q = queue.Queue(args.queues)   # Gray  image Queue
+    #z = queue.Queue(args.queues)   # Depth image Queue
+    q = mp.Queue(args.queues)   # Gray  image Queue
+    z = mp.Queue(args.queues)   # Depth image Queue
     l = MyListener(q,args.mode,z)  # Listener
     cam.registerDataListener(l)    # Regist Listener
     cam.startCapture()             # start flexx
@@ -265,6 +270,7 @@ def main():
     args.add_argument("-m", "--mode",  type=int, default=1, help="ModeNo.")
     args.add_argument("-n", "--name",  type=str, default='MODE_5_45FPS_500', help="ModeName.")
     args.add_argument("-q", "--queues",type=int, default=33*5, help="Depth of Queue.")
+    args.add_argument("-ud","--usedepth",action='store_true', help="full highlight for objects")
     args = args.parse_args()
 
     flexx(args)
