@@ -68,7 +68,7 @@ $ cd 3.21.1.70/driver/udev
 - Run sample as fist movement,
 
 ```
-$ cd libroyale-3.20.0.62-LINUX-x86-64Bit/python
+$ cd libroyale-3.21.1.70-LINUX-x86-64Bit/python
 $ python3 sample_camera_info.py 
 Number of cameras connected:  1
 ====================================
@@ -137,8 +137,16 @@ $ python3 -c "import cv2"
 $
 ```
 Silence is good response!  
+As of now you've got OpenVINO environment too.  
 
 ```
 $ python3 demo_camera.py
 ```
 ![](files/Z.png)
+
+### Run PICO Flexx with Movidus OpenVINO  
+
+    $ cd cd 3.21.1.70/python
+    $ python3 demo_fx3_ssd_mobilenet.py
+
+![](files/Z+G+Flexx.png)
