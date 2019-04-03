@@ -146,7 +146,7 @@ $ python3 demo_camera.py
 
 ### Run PICO Flexx with Movidus OpenVINO  
 
-    $ cd cd 3.21.1.70/python
+    $ cd libroyale-LINUX-arm/3.21.1.70/python
     $ python3 demo_fx3_ssd_mobilenet.py
 
 ![](files/Z+G+Flexx.png)
