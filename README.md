@@ -148,13 +148,13 @@ $ python3 demo_camera.py
 
 - Install SSD-Mobilenet OpenVINO environment  
 
-    $ cd
-    $ git clone https://github.com/k5iogura/vinosyp
+    $ cd  
+    $ git clone https://github.com/k5iogura/vinosyp  
 
 - Run demo  
 
-    $ cd libroyale-LINUX-arm/3.21.1.70/python
-    $ python3 demo_fx3_ssd_mobilenet.py
+    $ cd libroyale-LINUX-arm/3.21.1.70/python  
+    $ python3 demo_fx3_ssd_mobilenet.py  
 
 - Demo script structure  
 
