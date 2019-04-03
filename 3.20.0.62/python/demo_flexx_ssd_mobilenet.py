@@ -6,7 +6,6 @@ import cv2
 import numpy as np
 from time import time,sleep
 import queue
-import multiprocessing as mp
 
 # For OpenVINO
 from openvino.inference_engine import IENetwork, IEPlugin
@@ -109,7 +108,7 @@ def make_effect(src, depth, class_id=0):
     src += effect
     return src
 
-def process_event_queue (g,args,z=None):
+def process_event_queue (cam,g,args,z=None):
     model_xml='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.xml'
     model_bin='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.bin'
     model_xml = os.environ['HOME'] + "/" + model_xml
@@ -133,6 +132,7 @@ def process_event_queue (g,args,z=None):
     input_blob = next(iter(net.inputs))  #input_blob = 'data'
     out_blob   = next(iter(net.outputs)) #out_blob   = 'detection_out'
     model_n, model_c, model_h, model_w = net.inputs[input_blob].shape #Tool kit R4
+    print("== IENetwork.name",net.name,"==")
     print("n/c/h/w (from xml)= %d %d %d %d"%(model_n, model_c, model_h, model_w))
     print("input_blob : out_blob =",input_blob,":",out_blob)
 
@@ -140,20 +140,26 @@ def process_event_queue (g,args,z=None):
 
     start = time()
     done_frame=0
+    cam.startCapture()             # start flexx
+    ZQfreeze = GQfreeze = 0
     while True:
         try:# Depth Image
             itemZ= z.get(True, 5) # HW float
         except queue.Empty:
-            print("\nDepth image queue timeout and continue program")
-        else:
-            pass
-            #print(" ",len(itemZ[itemZ>0.]), np.max(itemZ), np.min(itemZ[itemZ!=0]))
+            # print("\nDepth image queue timeout and restart flexx")
+            ZQfreeze+=1
+            cam.stopCapture()
+            cam.startCapture()
+            continue
 
         try:# Gray Image
             item = g.get(True, 5) # orignal version
         except queue.Empty:
-            print("\nGray image queue timeout and exit from program")
-            break
+            # print("\nGray image queue timeout and restart flexx")
+            GQfreeze+=1
+            cam.stopCapture()
+            cam.startCapture()
+            continue
         else:
             frame_org = np.zeros((3, item.shape[0], item.shape[1]),dtype=np.uint8)  # CHW uint8
             flexx_image = item*255.
@@ -185,10 +191,11 @@ def process_event_queue (g,args,z=None):
             # FPS
             done_frame+=1
             end = time()+1e-10
-            sys.stdout.write('\b'*20)
-            sys.stdout.write("%10.2f FPS"%(done_frame/(end-start)))
+            sys.stdout.write('\b'*30)
+            sys.stdout.write("%10.2f FPS (ZQ/GQ:%03d/%03d)"%(done_frame/(end-start),ZQfreeze,GQfreeze))
             sys.stdout.flush()
     #       painter.paint (item) # original code
+
     print("\nfinished")
     cv2.destroyAllWindows()
     del exec_net
@@ -253,15 +260,13 @@ def flexx (args):
     print("isConnected", cam.isConnected())
     print("getFrameRate", cam.getFrameRate())
 
-    #g = queue.Queue(args.queues)   # Gray  image Queue
-    #z = queue.Queue(args.queues)   # Depth image Queue
-    g = mp.Queue(args.queues)   # Gray  image Queue
-    z = mp.Queue(args.queues)   # Depth image Queue
+    g = queue.Queue(args.queues)   # Gray  image Queue
+    z = queue.Queue(args.queues)   # Depth image Queue
     l = MyListener(g,args.mode,z)  # Listener
     cam.registerDataListener(l)    # Regist Listener
-    cam.startCapture()             # start flexx
-    process_event_queue(g,args,z)  # camera loop with Inference
-    cam.stopCapture()              # stop  flexx
+    #cam.startCapture()             # start flexx
+    process_event_queue(cam,g,args,z)  # camera loop with Inference
+    #cam.stopCapture()              # stop  flexx
 
 def main():
     args = argparse.ArgumentParser()
