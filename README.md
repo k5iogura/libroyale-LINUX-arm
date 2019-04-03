@@ -144,9 +144,66 @@ $ python3 demo_camera.py
 ```
 ![](files/Z.png)
 
-### Run PICO Flexx with Movidus OpenVINO  
+### Run PICO Flexx with Movidus Device via OpenVINO  
 
     $ cd libroyale-LINUX-arm/3.21.1.70/python
     $ python3 demo_fx3_ssd_mobilenet.py
+
+```
+- From PICO Flexx device,  
+get GrayScale image  
+get Depth image  
+
+- To Mobidius device,  
+send GrayScale image to Movidius device  
+start inference engine  
+
+- Merge GrayScale image and result of inference region box  
+erase depth data without in inferred region box  
+overlay depth data on GrayScale image  
+```
+
+**It seems like pixelwise segmentation task.**
+**We used depth sensing results instead of segmentation NeuralNetwork model.**  
+
+```
+Number of cameras connected:  1
+====================================
+        Camera information
+====================================
+Type:            PICOFLEXX
+Width:           224
+Height:          171
+Operation modes: 9
+    MODE_9_5FPS_2000
+    MODE_9_10FPS_1000
+    MODE_9_15FPS_700
+    MODE_9_25FPS_450
+    MODE_5_35FPS_600
+    MODE_5_45FPS_500
+    MODE_MIXED_30_5
+        this operation mode has 2 streams
+    Low_Noise_Extended
+    Fast_Acquisition
+CameraInfo items: 8
+    ('BRIDGE_TYPE', 'Enclustra')
+    ('MODULE_IDENTIFIER', '00000000')
+    ('MODULE_IDENTIFIER_HASH', '558161692')
+    ('MODULE_SERIAL', '0')
+    ('MODULE_SUFFIX', '')
+    ('IMAGER', 'M2450_A12_AIO')
+    ('PROCESSING_NAME', 'Spectre')
+    ('PROCESSING_VERSION', '3.13.2.748')
+isConnected True
+getFrameRate 45
+View Gray Mode
+== IENetwork.name MobileNet-SSD ==
+n/c/h/w (from xml)= 1 3 300 300
+input_blob : out_blob = data : detection_out
+Gtk-Message: Failed to load module "canberra-gtk-module"
+Gtk-Message: Failed to load module "canberra-gtk-module"
+      1.91 FPS (ZQ/GQ:000/000)
+finished
+```
 
 ![](files/Z+G+Flexx.png)
