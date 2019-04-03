@@ -163,7 +163,7 @@ $ python3 demo_camera.py
 get GrayScale image  
 get Depth image  
 
-- To Mobidius device,  
+- To Movidius device,  
 send GrayScale image to Movidius device  
 start inference engine  
 
