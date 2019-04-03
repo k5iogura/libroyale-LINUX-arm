@@ -109,8 +109,10 @@ def make_effect(src, depth, class_id=0):
     return src
 
 def process_event_queue (cam,g,args,z=None):
-    model_xml='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.xml'
-    model_bin='vinosyp/models/SSD_Mobilenet/FP32/MobileNetSSD_deploy.bin'
+    precision='FP32'
+    if args.device=='MYRIAD': precision='FP16'
+    model_xml='vinosyp/models/SSD_Mobilenet/'+precision+'/MobileNetSSD_deploy.xml'
+    model_bin='vinosyp/models/SSD_Mobilenet/'+precision+'/MobileNetSSD_deploy.bin'
     model_xml = os.environ['HOME'] + "/" + model_xml
     model_bin = os.environ['HOME'] + "/" + model_bin
     net = IENetwork(model=model_xml, weights=model_bin)	#R5
